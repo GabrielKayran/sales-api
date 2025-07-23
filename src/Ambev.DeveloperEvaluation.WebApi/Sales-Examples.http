@@ -1,0 +1,74 @@
+### Criar uma nova venda
+POST https://localhost:7181/api/sales
+Content-Type: application/json
+
+{
+  "saleNumber": "SALE-2024-001",
+  "saleDate": "2024-01-15T10:30:00",
+  "customer": "João Silva",
+  "branch": "Filial Centro SP",
+  "items": [
+    {
+      "product": "Cerveja Skol 350ml",
+      "quantity": 6,
+      "unitPrice": 4.50
+    },
+    {
+      "product": "Cerveja Brahma 350ml", 
+      "quantity": 12,
+      "unitPrice": 4.80
+    },
+    {
+      "product": "Água Mineral 500ml",
+      "quantity": 3,
+      "unitPrice": 2.00
+    }
+  ]
+}
+
+### Buscar venda por ID (substitua {id} pelo ID retornado na criação)
+GET https://localhost:7181/api/sales/{id}
+
+### Cancelar venda (substitua {id} pelo ID da venda)
+PATCH https://localhost:7181/api/sales/{id}/cancel
+Content-Type: application/json
+
+{
+  "reason": "Cliente solicitou cancelamento"
+}
+
+### Exemplo de venda com desconto máximo (20 itens)
+POST https://localhost:7181/api/sales
+Content-Type: application/json
+
+{
+  "saleNumber": "SALE-2024-002",
+  "saleDate": "2024-01-15T14:20:00",
+  "customer": "Maria Santos", 
+  "branch": "Filial Zona Norte",
+  "items": [
+    {
+      "product": "Cerveja Corona 350ml",
+      "quantity": 20,
+      "unitPrice": 6.50
+    }
+  ]
+}
+
+### Exemplo de venda sem desconto (menos de 4 itens)
+POST https://localhost:7181/api/sales
+Content-Type: application/json
+
+{
+  "saleNumber": "SALE-2024-003",
+  "saleDate": "2024-01-15T16:45:00",
+  "customer": "Pedro Oliveira",
+  "branch": "Filial Shopping",
+  "items": [
+    {
+      "product": "Cerveja Heineken 350ml",
+      "quantity": 2,
+      "unitPrice": 7.00
+    }
+  ]
+} 
