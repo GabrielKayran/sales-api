@@ -2247,11 +2247,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Application\\Ambev.DeveloperEvaluation.Application.csproj",
+      "projectUniqueName": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Application\\Ambev.DeveloperEvaluation.Application.csproj",
       "projectName": "Ambev.DeveloperEvaluation.Application",
-      "projectPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Application\\Ambev.DeveloperEvaluation.Application.csproj",
+      "projectPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Application\\Ambev.DeveloperEvaluation.Application.csproj",
       "packagesPath": "C:\\Users\\arnal\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Application\\obj\\",
+      "outputPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\arnal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2268,8 +2268,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Domain\\Ambev.DeveloperEvaluation.Domain.csproj": {
-              "projectPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Domain\\Ambev.DeveloperEvaluation.Domain.csproj"
+            "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Domain\\Ambev.DeveloperEvaluation.Domain.csproj": {
+              "projectPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Domain\\Ambev.DeveloperEvaluation.Domain.csproj"
             }
           }
         }

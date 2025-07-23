@@ -4194,11 +4194,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.WebApi\\Ambev.DeveloperEvaluation.WebApi.csproj",
+      "projectUniqueName": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.WebApi\\Ambev.DeveloperEvaluation.WebApi.csproj",
       "projectName": "Ambev.DeveloperEvaluation.WebApi",
-      "projectPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.WebApi\\Ambev.DeveloperEvaluation.WebApi.csproj",
+      "projectPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.WebApi\\Ambev.DeveloperEvaluation.WebApi.csproj",
       "packagesPath": "C:\\Users\\arnal\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.WebApi\\obj\\",
+      "outputPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\arnal\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4215,8 +4215,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.IoC\\Ambev.DeveloperEvaluation.IoC.csproj": {
-              "projectPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.IoC\\Ambev.DeveloperEvaluation.IoC.csproj"
+            "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.IoC\\Ambev.DeveloperEvaluation.IoC.csproj": {
+              "projectPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.IoC\\Ambev.DeveloperEvaluation.IoC.csproj"
             }
           }
         }

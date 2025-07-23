@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Ambev.DeveloperEvaluation.Integration
-build_property.ProjectDir = C:\Users\arnal\Downloads\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\template\backend\tests\Ambev.DeveloperEvaluation.Integration\
+build_property.ProjectDir = C:\Users\arnal\nttData\ambev-api\tests\Ambev.DeveloperEvaluation.Integration\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

@@ -2149,11 +2149,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Common\\Ambev.DeveloperEvaluation.Common.csproj",
+      "projectUniqueName": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Common\\Ambev.DeveloperEvaluation.Common.csproj",
       "projectName": "Ambev.DeveloperEvaluation.Common",
-      "projectPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Common\\Ambev.DeveloperEvaluation.Common.csproj",
+      "projectPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Common\\Ambev.DeveloperEvaluation.Common.csproj",
       "packagesPath": "C:\\Users\\arnal\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\arnal\\Downloads\\abi-gth-omnia-developer-evaluation 1 (1) 5 (1) - NET  2025\\template\\backend\\src\\Ambev.DeveloperEvaluation.Common\\obj\\",
+      "outputPath": "C:\\Users\\arnal\\nttData\\ambev-api\\src\\Ambev.DeveloperEvaluation.Common\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\arnal\\AppData\\Roaming\\NuGet\\NuGet.Config",
