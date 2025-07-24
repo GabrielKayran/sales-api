@@ -19,8 +19,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, GetProductsR
     public async Task<GetProductsResult> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
         var query = await _productRepository.GetProductsAsync(cancellationToken);
-
-        // Aplicar filtros
+        
         if (!string.IsNullOrEmpty(request.Title))
         {
             query = query.Where(p => p.Title.Contains(request.Title));
@@ -40,8 +39,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, GetProductsR
         {
             query = query.Where(p => p.Price <= request.MaxPrice.Value);
         }
-
-        // Aplicar ordenação
+        
         if (!string.IsNullOrEmpty(request.Order))
         {
             query = ApplyOrdering(query, request.Order);
@@ -50,11 +48,9 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, GetProductsR
         {
             query = query.OrderByDescending(p => p.CreatedAt);
         }
-
-        // Contar total de itens
+        
         var totalItems = query.Count();
 
-        // Aplicar paginação
         var products = query
             .Skip((request.Page - 1) * request.Size)
             .Take(request.Size)

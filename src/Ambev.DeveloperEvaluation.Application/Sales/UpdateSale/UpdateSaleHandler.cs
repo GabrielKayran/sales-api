@@ -62,10 +62,8 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
             existingSale.AddItem(saleItem);
         }
 
-        // Recalcular valores totais
         existingSale.CalculateTotalAmount();
 
-        // Salvar as alterações
         var updatedSale = await _saleRepository.UpdateAsync(existingSale, cancellationToken);
 
         return _mapper.Map<UpdateSaleResult>(updatedSale);
