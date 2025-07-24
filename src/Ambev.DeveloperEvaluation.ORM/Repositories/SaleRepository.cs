@@ -41,6 +41,13 @@ public class SaleRepository : ISaleRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IQueryable<Sale>> GetSalesAsync(CancellationToken cancellationToken = default)
+    {
+        return _context.Sales
+            .Include(s => s.Items)
+            .AsQueryable();
+    }
+
     public async Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellationToken = default)
     {
         _context.Sales.Update(sale);
