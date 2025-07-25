@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -22,16 +23,64 @@ public class Sale : BaseEntity
         Status = SaleStatus.Active;
     }
 
-    public void CalculateTotalAmount()
+    /// <summary>
+    /// Creates a new sale and publishes SaleCreatedEvent
+    /// </summary>
+    public static Sale Create(string saleNumber, string customer, string branch)
     {
-        TotalAmount = Items.Sum(item => item.TotalAmount);
-        UpdatedAt = DateTime.UtcNow;
+        var sale = new Sale
+        {
+            Id = Guid.NewGuid(),
+            SaleNumber = saleNumber,
+            Customer = customer,
+            Branch = branch,
+            SaleDate = DateTime.UtcNow
+        };
+
+        // Publish SaleCreatedEvent
+        sale.AddDomainEvent(new SaleCreatedEvent(
+            sale.Id,
+            sale.SaleNumber,
+            sale.Customer,
+            sale.Branch,
+            sale.TotalAmount,
+            sale.Items.Count
+        ));
+
+        return sale;
     }
 
-    public void Cancel()
+    public void CalculateTotalAmount()
+    {
+        var previousAmount = TotalAmount;
+        TotalAmount = Items.Sum(item => item.TotalAmount);
+        UpdatedAt = DateTime.UtcNow;
+
+        // Publish SaleModifiedEvent if amount changed
+        if (previousAmount != TotalAmount && previousAmount > 0)
+        {
+            AddDomainEvent(new SaleModifiedEvent(
+                Id,
+                SaleNumber,
+                TotalAmount,
+                previousAmount,
+                "Amount Recalculated"
+            ));
+        }
+    }
+
+    public void Cancel(string reason = "Sale cancelled by user")
     {
         Status = SaleStatus.Cancelled;
         UpdatedAt = DateTime.UtcNow;
+
+        // Publish SaleCancelledEvent
+        AddDomainEvent(new SaleCancelledEvent(
+            Id,
+            SaleNumber,
+            reason,
+            TotalAmount
+        ));
     }
 
     public void AddItem(SaleItem item)
@@ -47,6 +96,16 @@ public class Sale : BaseEntity
         var item = Items.FirstOrDefault(i => i.Id == itemId);
         if (item != null)
         {
+            // Publish ItemCancelledEvent before removing
+            AddDomainEvent(new ItemCancelledEvent(
+                Id,
+                item.Id,
+                item.Product,
+                item.Quantity,
+                item.UnitPrice,
+                item.TotalAmount
+            ));
+
             Items.Remove(item);
             CalculateTotalAmount();
         }

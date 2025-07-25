@@ -2,6 +2,7 @@ using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Validation;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
@@ -84,6 +85,27 @@ public class User : BaseEntity, IUser
     public User()
     {
         CreatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Creates a new user and publishes UserRegisteredEvent
+    /// </summary>
+    public static User Create(string username, string email, string phone, string password, UserRole role)
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = username,
+            Email = email,
+            Phone = phone,
+            Password = password,
+            Role = role,
+            Status = UserStatus.Active
+        };
+
+        user.AddDomainEvent(new UserRegisteredEvent(user));
+
+        return user;
     }
 
     /// <summary>

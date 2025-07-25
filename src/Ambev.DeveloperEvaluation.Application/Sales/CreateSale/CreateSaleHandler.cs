@@ -59,16 +59,14 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
 
         var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
 
-        var saleCreatedEvent = new SaleCreatedEvent
-        {
-            SaleId = createdSale.Id,
-            SaleNumber = createdSale.SaleNumber,
-            Customer = createdSale.Customer,
-            Branch = createdSale.Branch,
-            TotalAmount = createdSale.TotalAmount,
-            CreatedAt = createdSale.CreatedAt,
-            ItemCount = createdSale.Items.Count
-        };
+        var saleCreatedEvent = new SaleCreatedEvent(
+            createdSale.Id,
+            createdSale.SaleNumber, 
+            createdSale.Customer,
+            createdSale.Branch,
+            createdSale.TotalAmount,
+            createdSale.Items.Count
+        );
 
         _logger.LogInformation("Venda criada: {@SaleCreatedEvent}", saleCreatedEvent);
 

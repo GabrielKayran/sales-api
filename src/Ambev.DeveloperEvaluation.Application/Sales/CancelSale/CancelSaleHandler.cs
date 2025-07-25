@@ -29,13 +29,12 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
         sale.Cancel();
         await _saleRepository.UpdateAsync(sale, cancellationToken);
 
-        var saleCancelledEvent = new SaleCancelledEvent
-        {
-            SaleId = sale.Id,
-            SaleNumber = sale.SaleNumber,
-            CancelledAt = DateTime.UtcNow,
-            Reason = command.Reason
-        };
+        var saleCancelledEvent = new SaleCancelledEvent(
+            sale.Id,
+            sale.SaleNumber,
+            command.Reason,
+            sale.TotalAmount 
+        );
 
         _logger.LogInformation("Venda cancelada: {@SaleCancelledEvent}", saleCancelledEvent);
 
