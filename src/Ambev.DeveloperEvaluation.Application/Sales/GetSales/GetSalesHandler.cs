@@ -50,7 +50,6 @@ public class GetSalesHandler : IRequestHandler<GetSalesQuery, GetSalesResult>
             }
         }
 
-        // Aplicar ordenação
         if (!string.IsNullOrEmpty(request.Order))
         {
             query = ApplyOrdering(query, request.Order);
@@ -60,10 +59,8 @@ public class GetSalesHandler : IRequestHandler<GetSalesQuery, GetSalesResult>
             query = query.OrderByDescending(s => s.CreatedAt);
         }
 
-        // Contar total de itens
         var totalItems = query.Count();
 
-        // Aplicar paginação
         var sales = query
             .Skip((request.Page - 1) * request.Size)
             .Take(request.Size)

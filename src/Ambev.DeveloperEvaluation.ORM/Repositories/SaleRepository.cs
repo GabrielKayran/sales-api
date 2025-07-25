@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -7,16 +8,21 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 public class SaleRepository : ISaleRepository
 {
     private readonly DefaultContext _context;
+    private readonly IDomainEventDispatcher _eventDispatcher;
 
-    public SaleRepository(DefaultContext context)
+    public SaleRepository(DefaultContext context, IDomainEventDispatcher eventDispatcher)
     {
         _context = context;
+        _eventDispatcher = eventDispatcher;
     }
 
     public async Task<Sale> CreateAsync(Sale sale, CancellationToken cancellationToken = default)
     {
         _context.Sales.Add(sale);
         await _context.SaveChangesAsync(cancellationToken);
+        
+        await _eventDispatcher.DispatchEventsAsync(sale, cancellationToken);
+        
         return sale;
     }
 
@@ -52,6 +58,10 @@ public class SaleRepository : ISaleRepository
     {
         _context.Sales.Update(sale);
         await _context.SaveChangesAsync(cancellationToken);
+        
+        // Dispatch domain events after successful save
+        await _eventDispatcher.DispatchEventsAsync(sale, cancellationToken);
+        
         return sale;
     }
 

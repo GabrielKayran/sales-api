@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -10,14 +11,17 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly DefaultContext _context;
+    private readonly IDomainEventDispatcher _eventDispatcher;
 
     /// <summary>
     /// Initializes a new instance of UserRepository
     /// </summary>
     /// <param name="context">The database context</param>
-    public UserRepository(DefaultContext context)
+    /// <param name="eventDispatcher">The domain event dispatcher</param>
+    public UserRepository(DefaultContext context, IDomainEventDispatcher eventDispatcher)
     {
         _context = context;
+        _eventDispatcher = eventDispatcher;
     }
 
     /// <summary>
@@ -30,6 +34,10 @@ public class UserRepository : IUserRepository
     {
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+        
+        // Dispatch domain events after successful save
+        await _eventDispatcher.DispatchEventsAsync(user, cancellationToken);
+        
         return user;
     }
 
