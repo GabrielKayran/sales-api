@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
@@ -43,6 +44,7 @@ public class UsersController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created user details</returns>
     [HttpPost]
+    [AllowAnonymous] // 🔓 Criação de usuário é pública
     [ProducesResponseType(typeof(ApiResponseWithData<CreateUserResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
@@ -71,6 +73,7 @@ public class UsersController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user details if found</returns>
     [HttpGet("{id}")]
+    [Authorize] // 🔐 Requer autenticação
     [ProducesResponseType(typeof(ApiResponseWithData<GetUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

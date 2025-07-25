@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
@@ -17,6 +18,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SalesController : BaseController
 {
     private readonly IMediator _mediator;
