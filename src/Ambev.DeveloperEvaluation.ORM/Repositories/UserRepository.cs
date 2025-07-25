@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,5 +71,28 @@ public class UserRepository : IUserRepository
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    /// <summary>
+    /// Retrieves all users with pagination and filtering support
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Queryable collection of users</returns>
+    public async Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken = default)
+    {
+        return _context.Users.AsQueryable();
+    }
+
+    /// <summary>
+    /// Updates an existing user in the repository
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user</returns>
+    public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
+        return user;
     }
 }
