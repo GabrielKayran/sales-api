@@ -1,13 +1,13 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCarts;
 
-public class GetCartsResponse
+public class GetCartsResponse : PaginatedList<GetCartsResponseDto>
 {
-    public List<GetCartsResponseDto> Data { get; set; } = new List<GetCartsResponseDto>();
-    public int TotalCount { get; set; }
-    public int Page { get; set; }
-    public int TotalPages { get; set; }
-    public bool HasNextPage { get; set; }
-    public bool HasPreviousPage { get; set; }
+    public GetCartsResponse(List<GetCartsResponseDto> items, int count, int pageNumber, int pageSize) 
+        : base(items, count, pageNumber, pageSize)
+    {
+    }
 }
 
 public class GetCartsResponseDto

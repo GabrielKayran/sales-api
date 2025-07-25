@@ -43,9 +43,7 @@ public class CartsController : BaseController
         var query = _mapper.Map<GetCartsQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        var cartsResponse = _mapper.Map<GetCartsResponse>(response);
-        
-        return base.Ok(cartsResponse.Data);
+        return Ok(_mapper.Map<GetCartsResponse>(response));
     }
 
     [HttpPost]
@@ -79,12 +77,7 @@ public class CartsController : BaseController
         var query = new GetCartQuery(id);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCartResponse>
-        {
-            Success = true,
-            Message = "Carrinho recuperado com sucesso",
-            Data = _mapper.Map<GetCartResponse>(response)
-        });
+        return Ok(_mapper.Map<GetCartResponse>(response));
     }
 
     [HttpPut("{id}")]
@@ -103,12 +96,7 @@ public class CartsController : BaseController
         var command = _mapper.Map<UpdateCartCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateCartResponse>
-        {
-            Success = true,
-            Message = "Carrinho atualizado com sucesso",
-            Data = _mapper.Map<UpdateCartResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateCartResponse>(response));
     }
 
     [HttpDelete("{id}")]

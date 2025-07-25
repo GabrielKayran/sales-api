@@ -1,14 +1,16 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUsers;
 
 /// <summary>
 /// Response model for getting paginated users
 /// </summary>
-public class GetUsersResponse
+public class GetUsersResponse : PaginatedList<GetUsersUserDto>
 {
-    public List<GetUsersUserDto> Data { get; set; } = new();
-    public int TotalItems { get; set; }
-    public int CurrentPage { get; set; }
-    public int TotalPages { get; set; }
+    public GetUsersResponse(List<GetUsersUserDto> items, int count, int pageNumber, int pageSize) 
+        : base(items, count, pageNumber, pageSize)
+    {
+    }
 }
 
 /// <summary>

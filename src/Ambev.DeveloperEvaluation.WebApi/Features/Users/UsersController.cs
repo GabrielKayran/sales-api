@@ -89,12 +89,7 @@ public class UsersController : BaseController
         var command = _mapper.Map<GetUserCommand>(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetUserResponse>
-        {
-            Success = true,
-            Message = "User retrieved successfully",
-            Data = _mapper.Map<GetUserResponse>(response)
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -117,12 +112,7 @@ public class UsersController : BaseController
         var query = _mapper.Map<GetUsersQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetUsersResponse>
-        {
-            Success = true,
-            Message = "Users retrieved successfully",
-            Data = _mapper.Map<GetUsersResponse>(response)
-        });
+        return Ok(_mapper.Map<GetUsersResponse>(response));
     }
 
     /// <summary>
@@ -150,12 +140,7 @@ public class UsersController : BaseController
         try
         {
             var response = await _mediator.Send(command, cancellationToken);
-            return Ok(new ApiResponseWithData<UpdateUserResponse>
-            {
-                Success = true,
-                Message = "User updated successfully",
-                Data = _mapper.Map<UpdateUserResponse>(response)
-            });
+            return Ok(_mapper.Map<UpdateUserResponse>(response));
         }
         catch (KeyNotFoundException)
         {

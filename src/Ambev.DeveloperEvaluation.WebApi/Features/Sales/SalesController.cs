@@ -44,12 +44,7 @@ public class SalesController : BaseController
         var query = _mapper.Map<GetSalesQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetSalesResponse>
-        {
-            Success = true,
-            Message = "Vendas recuperadas com sucesso",
-            Data = _mapper.Map<GetSalesResponse>(response)
-        });
+        return Ok(_mapper.Map<GetSalesResponse>(response));
     }
 
     [HttpPost]
@@ -90,12 +85,7 @@ public class SalesController : BaseController
         var command = new GetSaleCommand(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetSaleResponse>
-        {
-            Success = true,
-            Message = "Venda recuperada com sucesso",
-            Data = _mapper.Map<GetSaleResponse>(response)
-        });
+        return Ok(_mapper.Map<GetSaleResponse>(response));
     }
 
     [HttpPut("{id}")]
@@ -114,12 +104,7 @@ public class SalesController : BaseController
         var command = _mapper.Map<UpdateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateSaleResponse>
-        {
-            Success = true,
-            Message = "Venda atualizada com sucesso",
-            Data = _mapper.Map<UpdateSaleResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateSaleResponse>(response));
     }
 
     [HttpPatch("{id}/cancel")]

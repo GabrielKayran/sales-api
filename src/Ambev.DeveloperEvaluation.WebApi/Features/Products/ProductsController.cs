@@ -45,12 +45,11 @@ public class ProductsController : BaseController
         var query = _mapper.Map<GetProductsQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetProductsResponse>
-        {
-            Success = true,
-            Message = "Produtos recuperados com sucesso",
-            Data = _mapper.Map<GetProductsResponse>(response)
-        });
+        return Ok(new GetProductsResponse(
+                _mapper.Map<List<GetProductsResponseDto>>(response.Data),
+                response.TotalItems,
+                response.CurrentPage,
+                response.TotalPages));
     }
 
     [HttpPost]
@@ -84,12 +83,7 @@ public class ProductsController : BaseController
         var query = new GetProductQuery(id);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetProductResponse>
-        {
-            Success = true,
-            Message = "Produto recuperado com sucesso",
-            Data = _mapper.Map<GetProductResponse>(response)
-        });
+        return Ok(_mapper.Map<GetProductResponse>(response));
     }
 
     [HttpPut("{id}")]
@@ -108,12 +102,7 @@ public class ProductsController : BaseController
         var command = _mapper.Map<UpdateProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateProductResponse>
-        {
-            Success = true,
-            Message = "Produto atualizado com sucesso",
-            Data = _mapper.Map<UpdateProductResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateProductResponse>(response));
     }
 
     [HttpDelete("{id}")]
@@ -138,12 +127,7 @@ public class ProductsController : BaseController
         var query = new GetCategoriesQuery();
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCategoriesResponse>
-        {
-            Success = true,
-            Message = "Categorias recuperadas com sucesso",
-            Data = _mapper.Map<GetCategoriesResponse>(response)
-        });
+        return Ok(_mapper.Map<GetCategoriesResponse>(response));
     }
 
 
