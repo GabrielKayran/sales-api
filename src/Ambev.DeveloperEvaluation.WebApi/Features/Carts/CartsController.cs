@@ -1,0 +1,129 @@
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCarts;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
+using Ambev.DeveloperEvaluation.Application.Carts.GetCarts;
+using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
+
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CartsController : BaseController
+{
+    private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
+
+    public CartsController(IMediator mediator, IMapper mapper)
+    {
+        _mediator = mediator;
+        _mapper = mapper;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetCartsResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetCarts([FromQuery] GetCartsRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new GetCartsRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var query = _mapper.Map<GetCartsQuery>(request);
+        var response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(new ApiResponseWithData<GetCartsResponse>
+        {
+            Success = true,
+            Message = "Carrinhos recuperados com sucesso",
+            Data = _mapper.Map<GetCartsResponse>(response)
+        });
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(ApiResponseWithData<CreateCartResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateCart([FromBody] CreateCartRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new CreateCartRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<CreateCartCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CreateCartResponse>
+        {
+            Success = true,
+            Message = "Carrinho criado com sucesso",
+            Data = _mapper.Map<CreateCartResponse>(response)
+        });
+    }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetCartResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCart([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetCartQuery(id);
+        var response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(new ApiResponseWithData<GetCartResponse>
+        {
+            Success = true,
+            Message = "Carrinho recuperado com sucesso",
+            Data = _mapper.Map<GetCartResponse>(response)
+        });
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateCartResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateCart([FromRoute] Guid id, [FromBody] UpdateCartRequest request, CancellationToken cancellationToken)
+    {
+        request.Id = id;
+        var validator = new UpdateCartRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateCartCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<UpdateCartResponse>
+        {
+            Success = true,
+            Message = "Carrinho atualizado com sucesso",
+            Data = _mapper.Map<UpdateCartResponse>(response)
+        });
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteCart([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteCartCommand(id);
+        await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "Carrinho deletado com sucesso"
+        });
+    }
+}
