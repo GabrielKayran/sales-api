@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
@@ -16,6 +17,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CartsController : BaseController
 {
     private readonly IMediator _mediator;
@@ -41,12 +43,9 @@ public class CartsController : BaseController
         var query = _mapper.Map<GetCartsQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCartsResponse>
-        {
-            Success = true,
-            Message = "Carrinhos recuperados com sucesso",
-            Data = _mapper.Map<GetCartsResponse>(response)
-        });
+        var cartsResponse = _mapper.Map<GetCartsResponse>(response);
+        
+        return base.Ok(cartsResponse.Data);
     }
 
     [HttpPost]
