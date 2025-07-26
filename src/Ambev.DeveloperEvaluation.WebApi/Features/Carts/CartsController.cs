@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCarts;
@@ -41,14 +42,25 @@ public class CartsController : BaseController
             return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetCartsQuery>(request);
+        
+        var currentUserRole = GetCurrentUserRole();
+        var isAdmin = currentUserRole == nameof(UserRole.Admin);
+        
+        if (!isAdmin)
+        {
+            query.UserId = GetCurrentUserId();
+        }
+        
         var response = await _mediator.Send(query, cancellationToken);
 
         return Ok(_mapper.Map<GetCartsResponse>(response));
     }
 
     [HttpPost]
+    [Authorize(Roles = $"{nameof(UserRole.Customer)},{nameof(UserRole.Manager)}")]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateCartResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateCart([FromBody] CreateCartRequest request, CancellationToken cancellationToken)
     {
         var validator = new CreateCartRequestValidator();
@@ -74,16 +86,21 @@ public class CartsController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCart([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var query = new GetCartQuery(id);
+        var currentUserId = GetCurrentUserId();
+        var currentUserRole = GetCurrentUserRole();
+        
+        var query = new GetCartQuery(id, currentUserId, currentUserRole);
         var response = await _mediator.Send(query, cancellationToken);
 
         return Ok(_mapper.Map<GetCartResponse>(response));
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = $"{nameof(UserRole.Customer)},{nameof(UserRole.Manager)}")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateCartResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateCart([FromRoute] Guid id, [FromBody] UpdateCartRequest request, CancellationToken cancellationToken)
     {
         request.Id = id;
@@ -100,11 +117,16 @@ public class CartsController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = $"{nameof(UserRole.Customer)},{nameof(UserRole.Manager)},{nameof(UserRole.Admin)}")]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteCart([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var command = new DeleteCartCommand(id);
+        var currentUserId = GetCurrentUserId();
+        var currentUserRole = GetCurrentUserRole();
+        
+        var command = new DeleteCartCommand(id, currentUserId, currentUserRole);
         await _mediator.Send(command, cancellationToken);
 
         return Ok(new ApiResponse
