@@ -38,7 +38,7 @@ public class CartsController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetCartsQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
@@ -55,7 +55,7 @@ public class CartsController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<CreateCartCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
@@ -91,7 +91,7 @@ public class CartsController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<UpdateCartCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);

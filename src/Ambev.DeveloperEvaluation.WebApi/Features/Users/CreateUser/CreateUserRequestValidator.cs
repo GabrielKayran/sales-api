@@ -17,7 +17,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
     /// - Email: Must be valid format (using EmailValidator)
     /// - Username: Required, length between 3 and 50 characters
     /// - Password: Must meet security requirements (using PasswordValidator)
-    /// - Phone: Must match international format (+X XXXXXXXXXX)
+    /// - Phone: Must match Brazilian phone format (e.g., (11) 91234-5678 or 11912345678)
     /// - Status: Cannot be Unknown
     /// - Role: Cannot be None
     /// </remarks>
@@ -26,7 +26,9 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
         RuleFor(user => user.Email).SetValidator(new EmailValidator());
         RuleFor(user => user.Username).NotEmpty().Length(3, 50);
         RuleFor(user => user.Password).SetValidator(new PasswordValidator());
-        RuleFor(user => user.Phone).Matches(@"^\+?[1-9]\d{1,14}$");
+        RuleFor(user => user.Phone)
+            .Matches(@"^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$")
+            .WithMessage("O telefone deve estar no formato brasileiro, ex: (11) 91234-5678 ou 11912345678");
         RuleFor(user => user.Status).NotEqual(UserStatus.Unknown);
         RuleFor(user => user.Role).NotEqual(UserRole.None);
     }

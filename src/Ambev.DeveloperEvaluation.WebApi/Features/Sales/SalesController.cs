@@ -39,7 +39,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetSalesQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
@@ -56,7 +56,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<CreateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
@@ -80,7 +80,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = new GetSaleCommand(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
@@ -99,7 +99,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<UpdateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
@@ -118,7 +118,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = new CancelSaleCommand(request.Id) { Reason = request.Reason };
         await _mediator.Send(command, cancellationToken);
