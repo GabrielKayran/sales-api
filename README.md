@@ -242,15 +242,6 @@ dotnet test Ambev.DeveloperEvaluation.sln --verbosity minimal --collect:"XPlat C
 - **Unit Tests**: `/tests/Ambev.DeveloperEvaluation.Unit.Tests`
 - **Integration Tests**: `/tests/Ambev.DeveloperEvaluation.Integration.Tests`
 
-## 🤝 Contributing
-
-1. **Fork** the project
-2. **Clone** your fork
-3. **Create** a branch for your feature (`git checkout -b feature/new-feature`)
-4. **Commit** your changes (`git commit -m 'Add new feature'`)
-5. **Push** to the branch (`git push origin feature/new-feature`)
-6. **Open** a Pull Request
-
 ### **Code Standards**
 - Follow **SOLID** principles
 - Use **Clean Architecture**
