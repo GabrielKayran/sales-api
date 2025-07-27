@@ -44,7 +44,14 @@ public class SalesController : BaseController
         var query = _mapper.Map<GetSalesQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(_mapper.Map<GetSalesResponse>(response));
+        var pageSize = request.Size > 0 ? request.Size : 10; // Usar Size do request ou padrão 10
+        var paginatedResponse = new GetSalesResponse(
+                _mapper.Map<List<SaleResponseDto>>(response.Data),
+                response.TotalItems,
+                response.CurrentPage,
+                pageSize);
+
+        return OkPaginated(paginatedResponse);
     }
 
     [HttpPost]

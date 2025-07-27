@@ -7,10 +7,12 @@ using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetCarts;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetMyCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCarts;
+using Ambev.DeveloperEvaluation.Application.Carts.GetMyCart;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 
@@ -78,6 +80,23 @@ public class CartsController : BaseController
             Message = "Carrinho criado com sucesso",
             Data = _mapper.Map<CreateCartResponse>(response)
         });
+    }
+
+    [HttpGet("my-cart")]
+    [ProducesResponseType(typeof(GetMyCartResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyCart(CancellationToken cancellationToken)
+    {
+        var currentUserId = GetCurrentUserId();
+        
+        var query = new GetMyCartQuery(currentUserId);
+        var response = await _mediator.Send(query, cancellationToken);
+
+        if (response == null)
+        {
+            return Ok((GetMyCartResponse?)null);
+        }
+
+        return Ok(response); 
     }
 
     [HttpGet("{id}")]

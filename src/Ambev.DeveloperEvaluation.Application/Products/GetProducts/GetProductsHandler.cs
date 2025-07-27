@@ -22,12 +22,12 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, GetProductsR
         
         if (!string.IsNullOrEmpty(request.Title))
         {
-            query = query.Where(p => p.Title.Contains(request.Title));
+            query = query.Where(p => p.Title.ToLower().Contains(request.Title.ToLower()));
         }
 
         if (!string.IsNullOrEmpty(request.Category))
         {
-            query = query.Where(p => p.Category.Contains(request.Category));
+            query = query.Where(p => p.Category.ToLower().Contains(request.Category.ToLower()));
         }
 
         if (request.MinPrice.HasValue)
