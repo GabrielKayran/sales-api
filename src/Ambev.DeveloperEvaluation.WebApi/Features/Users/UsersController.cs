@@ -14,6 +14,7 @@ using Ambev.DeveloperEvaluation.Application.Users.GetUsers;
 using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
 /// <summary>
@@ -53,17 +54,12 @@ public class UsersController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<CreateUserCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Created(string.Empty, new ApiResponseWithData<CreateUserResponse>
-        {
-            Success = true,
-            Message = "User created successfully",
-            Data = _mapper.Map<CreateUserResponse>(response)
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -84,17 +80,12 @@ public class UsersController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<GetUserCommand>(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetUserResponse>
-        {
-            Success = true,
-            Message = "User retrieved successfully",
-            Data = _mapper.Map<GetUserResponse>(response)
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -112,17 +103,12 @@ public class UsersController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetUsersQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetUsersResponse>
-        {
-            Success = true,
-            Message = "Users retrieved successfully",
-            Data = _mapper.Map<GetUsersResponse>(response)
-        });
+        return Ok(_mapper.Map<GetUsersResponse>(response));
     }
 
     /// <summary>
@@ -142,7 +128,7 @@ public class UsersController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<UpdateUserCommand>(request);
         command.Id = id;
@@ -150,12 +136,7 @@ public class UsersController : BaseController
         try
         {
             var response = await _mediator.Send(command, cancellationToken);
-            return Ok(new ApiResponseWithData<UpdateUserResponse>
-            {
-                Success = true,
-                Message = "User updated successfully",
-                Data = _mapper.Map<UpdateUserResponse>(response)
-            });
+            return Ok(_mapper.Map<UpdateUserResponse>(response));
         }
         catch (KeyNotFoundException)
         {
@@ -192,7 +173,7 @@ public class UsersController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<DeleteUserCommand>(request.Id);
         await _mediator.Send(command, cancellationToken);

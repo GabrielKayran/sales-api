@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
+using Ambev.DeveloperEvaluation.WebApi.Common.Converters;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -23,8 +24,13 @@ public class Program
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
 
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new UserRoleConverter());
+                    options.JsonSerializerOptions.Converters.Add(new UserStatusConverter());
+                });
+            builder.Services.AddEndpointsApiExplorer(); 
 
             builder.AddBasicHealthChecks();
             
@@ -75,6 +81,18 @@ public class Program
                     typeof(Program).Assembly
                 );
             });
+            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod() 
+                            .AllowCredentials(); 
+                    });
+            });
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
@@ -89,6 +107,7 @@ public class Program
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowAngular");
             app.UseAuthentication();
             app.UseAuthorization();
 

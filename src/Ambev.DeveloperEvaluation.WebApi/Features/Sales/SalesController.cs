@@ -39,17 +39,19 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetSalesQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetSalesResponse>
-        {
-            Success = true,
-            Message = "Vendas recuperadas com sucesso",
-            Data = _mapper.Map<GetSalesResponse>(response)
-        });
+        var pageSize = request.Size > 0 ? request.Size : 10; // Usar Size do request ou padrão 10
+        var paginatedResponse = new GetSalesResponse(
+                _mapper.Map<List<SaleResponseDto>>(response.Data),
+                response.TotalItems,
+                response.CurrentPage,
+                pageSize);
+
+        return OkPaginated(paginatedResponse);
     }
 
     [HttpPost]
@@ -61,7 +63,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<CreateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
@@ -85,17 +87,12 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = new GetSaleCommand(request.Id);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetSaleResponse>
-        {
-            Success = true,
-            Message = "Venda recuperada com sucesso",
-            Data = _mapper.Map<GetSaleResponse>(response)
-        });
+        return Ok(_mapper.Map<GetSaleResponse>(response));
     }
 
     [HttpPut("{id}")]
@@ -109,17 +106,12 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<UpdateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateSaleResponse>
-        {
-            Success = true,
-            Message = "Venda atualizada com sucesso",
-            Data = _mapper.Map<UpdateSaleResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateSaleResponse>(response));
     }
 
     [HttpPatch("{id}/cancel")]
@@ -133,7 +125,7 @@ public class SalesController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = new CancelSaleCommand(request.Id) { Reason = request.Reason };
         await _mediator.Send(command, cancellationToken);

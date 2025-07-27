@@ -42,11 +42,12 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
 
         var claims = new[]
-        {
-           new Claim(ClaimTypes.NameIdentifier, user.Id),
-           new Claim(ClaimTypes.Name, user.Username),
-           new Claim(ClaimTypes.Role, user.Role)
-       };
+        { 
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

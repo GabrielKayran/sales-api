@@ -1,13 +1,13 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProducts;
 
-public class GetProductsResponse
+public class GetProductsResponse : PaginatedList<GetProductsResponseDto>
 {
-    public List<GetProductsResponseDto> Data { get; set; } = new List<GetProductsResponseDto>();
-    public int TotalCount { get; set; }
-    public int Page { get; set; }
-    public int TotalPages { get; set; }
-    public bool HasNextPage { get; set; }
-    public bool HasPreviousPage { get; set; }
+    public GetProductsResponse(List<GetProductsResponseDto> items, int count, int pageNumber, int pageSize) 
+        : base(items, count, pageNumber, pageSize)
+    {
+    }
 }
 
 public class GetProductsResponseDto

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProducts;
@@ -40,29 +41,33 @@ public class ProductsController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var query = _mapper.Map<GetProductsQuery>(request);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetProductsResponse>
-        {
-            Success = true,
-            Message = "Produtos recuperados com sucesso",
-            Data = _mapper.Map<GetProductsResponse>(response)
-        });
+        var pageSize = request.Size > 0 ? request.Size : 10; // Usar Size do request ou padrão 10
+        var paginatedResponse = new GetProductsResponse(
+                _mapper.Map<List<GetProductsResponseDto>>(response.Data),
+                response.TotalItems,
+                response.CurrentPage,
+                pageSize);
+
+        return OkPaginated(paginatedResponse);
     }
 
     [HttpPost]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateProductResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
         var validator = new CreateProductRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<CreateProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
@@ -84,18 +89,15 @@ public class ProductsController : BaseController
         var query = new GetProductQuery(id);
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetProductResponse>
-        {
-            Success = true,
-            Message = "Produto recuperado com sucesso",
-            Data = _mapper.Map<GetProductResponse>(response)
-        });
+        return Ok(_mapper.Map<GetProductResponse>(response));
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateProductResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
     {
         request.Id = id;
@@ -103,22 +105,19 @@ public class ProductsController : BaseController
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
+            return BadRequest(ValidationHelper.BuildErrorMessage(validationResult.Errors));
 
         var command = _mapper.Map<UpdateProductCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<UpdateProductResponse>
-        {
-            Success = true,
-            Message = "Produto atualizado com sucesso",
-            Data = _mapper.Map<UpdateProductResponse>(response)
-        });
+        return Ok(_mapper.Map<UpdateProductResponse>(response));
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteProductCommand(id);
@@ -138,12 +137,7 @@ public class ProductsController : BaseController
         var query = new GetCategoriesQuery();
         var response = await _mediator.Send(query, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCategoriesResponse>
-        {
-            Success = true,
-            Message = "Categorias recuperadas com sucesso",
-            Data = _mapper.Map<GetCategoriesResponse>(response)
-        });
+        return Ok(_mapper.Map<GetCategoriesResponse>(response));
     }
 
 

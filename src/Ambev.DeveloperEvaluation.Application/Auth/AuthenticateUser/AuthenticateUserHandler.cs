@@ -29,13 +29,13 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser
             
             if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.Password))
             {
-                throw new UnauthorizedAccessException("Invalid credentials");
+                throw new UnauthorizedAccessException("Credenciais Erradas");
             }
 
             var activeUserSpec = new ActiveUserSpecification();
             if (!activeUserSpec.IsSatisfiedBy(user))
             {
-                throw new UnauthorizedAccessException("User is not active");
+                throw new UnauthorizedAccessException("Usuário Inativo");
             }
 
             var token = _jwtTokenGenerator.GenerateToken(user);

@@ -1,11 +1,13 @@
+using Ambev.DeveloperEvaluation.WebApi.Common;
+
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSales;
 
-public class GetSalesResponse
+public class GetSalesResponse : PaginatedList<SaleResponseDto>
 {
-    public List<SaleResponseDto> Data { get; set; } = new List<SaleResponseDto>();
-    public int TotalItems { get; set; }
-    public int CurrentPage { get; set; }
-    public int TotalPages { get; set; }
+    public GetSalesResponse(List<SaleResponseDto> items, int count, int pageNumber, int pageSize) 
+        : base(items, count, pageNumber, pageSize)
+    {
+    }
 }
 
 public class SaleResponseDto
