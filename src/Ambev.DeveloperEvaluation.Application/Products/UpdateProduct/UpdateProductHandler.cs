@@ -30,17 +30,23 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Update
         if (existingProduct == null)
             throw new KeyNotFoundException($"Produto com ID {request.Id} não foi encontrado");
 
+        ProductRating? rating = null;
+        if (request.Rating != null)
+        {
+            rating = new ProductRating
+            {
+                Rate = request.Rating.Rate,
+                Count = request.Rating.Count
+            };
+        }
+
         existingProduct.UpdateProduct(
             request.Title,
             request.Price,
             request.Description,
             request.Category,
             request.Image,
-            new ProductRating
-            {
-                Rate = request.Rating.Rate,
-                Count = request.Rating.Count
-            });
+            rating);
 
         var updatedProduct = await _productRepository.UpdateAsync(existingProduct, cancellationToken);
 

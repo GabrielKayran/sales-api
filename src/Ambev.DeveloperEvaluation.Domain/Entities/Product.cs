@@ -18,14 +18,15 @@ public class Product : BaseEntity
         CreatedAt = DateTime.UtcNow;
     }
 
-    public void UpdateProduct(string title, decimal price, string description, string category, string image, ProductRating rating)
+    public void UpdateProduct(string title, decimal price, string description, string category, string image, ProductRating? rating)
     {
         Title = title;
         Price = price;
         Description = description;
         Category = category;
         Image = image;
-        Rating = rating;
+        if (rating != null)
+            Rating = rating;
         UpdatedAt = DateTime.UtcNow;
     }
 }
