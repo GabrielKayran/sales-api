@@ -10,9 +10,7 @@ A complete REST API developed in .NET 8 following **Clean Architecture** and **D
 - [Environment Setup](#-environment-setup)
 - [Running the Project](#-running-the-project)
 - [API Documentation](#-api-documentation)
-- [Common Issues and Solutions](#-common-issues-and-solutions)
 - [Testing](#-testing)
-- [Contributing](#-contributing)
 
 ## 🎯 Overview
 
@@ -80,7 +78,7 @@ src/
 
 ### **1. Clone the Repository**
 ```bash
-git clone https://github.com/your-username/ambev-api.git
+git clone https://github.com/gabriel-dev-test/ambev-api.git
 cd ambev-api
 ```
 
@@ -189,50 +187,13 @@ GET /api/products?page=2&size=10
 }
 ```
 
-## 🔧 Common Issues and Solutions
-
-### **1. AutoMapper Error - Rating not found**
-**Problem:** `Missing type map configuration for Rating`
-
-**Solution:** Check if AutoMapper profiles are configured correctly:
-```csharp
-CreateMap<GetProductRatingResult, GetProductRatingResponseDto>();
-```
-
-### **2. Duplicate Validation Error**
-**Problem:** Duplicate error messages like "Product name is required; Product name is required"
-
-**Solution:** Check if there's no duplicate validation between layers (Domain, Application, WebApi).
-
-### **3. Pagination Not Working**
-**Problem:** Parameters `page` and `pageSize` are not recognized
-
-**Solution:** Check if parameter names are correct in the Request:
-```csharp
-public int Page { get; set; } = 1;  // ✅ Correct
-// [FromQuery(Name = "_page")] ❌ Incorrect
-```
-
-### **4. Cart Not Found (404)**
-**Problem:** Endpoint returns 404 when user has no cart
-
-**Solution:** Return 200 with `data: null` instead of 404:
-```csharp
-return Ok((GetMyCartResponse?)null);
-```
-
-### **5. Double Data Level in Response**
-**Problem:** Response with `{ "data": { "data": [...] } }`
-
-**Solution:** Use `OkPaginated()` instead of `Ok()` for paginated endpoints.
-
 ## 🧪 Testing
 
 ### **Run Unit Tests**
 ```bash
 dotnet test Ambev.DeveloperEvaluation.sln --verbosity minimal
 ```
-
+ 
 ### **Run Tests with Coverage**
 ```bash
 dotnet test Ambev.DeveloperEvaluation.sln --verbosity minimal --collect:"XPlat Code Coverage"
