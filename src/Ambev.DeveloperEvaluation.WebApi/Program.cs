@@ -24,6 +24,12 @@ public class Program
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
 
+            var port = Environment.GetEnvironmentVariable("PORT");
+            if (!string.IsNullOrEmpty(port))
+            {
+                builder.WebHost.UseUrls($"http://+:{port}");
+            }
+
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -118,7 +124,10 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
