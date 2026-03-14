@@ -40,7 +40,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var secretKey = _configuration["Jwt:SecretKey"]
-            ?? throw new InvalidOperationException("A chave JWT (Jwt:SecretKey) não está configurada.");
+            ?? throw new InvalidOperationException("JWT secret key (Jwt:SecretKey) is not configured.");
         var key = Encoding.ASCII.GetBytes(secretKey);
 
         var claims = new[]

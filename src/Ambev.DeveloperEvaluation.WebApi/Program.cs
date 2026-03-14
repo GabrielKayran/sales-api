@@ -24,6 +24,8 @@ public class Program
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
 
+            builder.Logging.AddConsole();
+
             var port = Environment.GetEnvironmentVariable("PORT");
             if (!string.IsNullOrEmpty(port))
             {
@@ -44,7 +46,7 @@ public class Program
             {
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header usando Bearer scheme. Exemplo: \"Authorization: Bearer {token}\"",
+                    Description = "JWT Authorization header using Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = Microsoft.OpenApi.Models.ParameterLocation.Header,
                     Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
@@ -69,8 +71,11 @@ public class Program
 
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
             var connectionString = !string.IsNullOrEmpty(databaseUrl)
-                ? databaseUrl
+                ? ConvertDatabaseUrl(databaseUrl)
                 : builder.Configuration.GetConnectionString("DefaultConnection");
+
+            Log.Information("Database connection configured (source: {Source})",
+                !string.IsNullOrEmpty(databaseUrl) ? "DATABASE_URL" : "appsettings.json");
 
             builder.Services.AddDbContext<DefaultContext>(options =>
                 options.UseNpgsql(
@@ -115,10 +120,17 @@ public class Program
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
-            using (var scope = app.Services.CreateScope())
+            try
             {
+                using var scope = app.Services.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+                Log.Information("Applying database migrations...");
                 db.Database.Migrate();
+                Log.Information("Database migrations applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to apply database migrations. The application will continue but may not work correctly.");
             }
 
             app.UseSwagger();
@@ -146,6 +158,39 @@ public class Program
         finally
         {
             Log.CloseAndFlush();
+        }
+    }
+
+    /// <summary>
+    /// Converts a PostgreSQL database URL (URI format) to an Npgsql connection string format.
+    /// Supports both formats: URI (postgresql://user:pass@host/db) and Npgsql (Host=...;Port=...)
+    /// </summary>
+    private static string ConvertDatabaseUrl(string databaseUrl)
+    {
+        // Already in Npgsql format (contains "Host="), return as-is
+        if (databaseUrl.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+            return databaseUrl;
+
+        // Convert from URI format: postgresql://user:password@host:port/database?params
+        try
+        {
+            var uri = new Uri(databaseUrl);
+            var userInfo = uri.UserInfo.Split(':');
+            var host = uri.Host;
+            var port = uri.Port > 0 ? uri.Port : 5432;
+            var database = uri.AbsolutePath.TrimStart('/');
+            var username = userInfo.Length > 0 ? userInfo[0] : "";
+            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+
+            var connStr = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+
+            Log.Information("Converted DATABASE_URL from URI format to Npgsql format (Host={Host}, Database={Database})", host, database);
+            return connStr;
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to parse DATABASE_URL as URI, using as-is");
+            return databaseUrl;
         }
     }
 }
