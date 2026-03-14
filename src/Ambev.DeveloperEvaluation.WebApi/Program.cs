@@ -61,9 +61,14 @@ public class Program
                 });
             });
 
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var connectionString = !string.IsNullOrEmpty(databaseUrl)
+                ? databaseUrl
+                : builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<DefaultContext>(options =>
                 options.UseNpgsql(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    connectionString,
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
             );
@@ -82,15 +87,20 @@ public class Program
                 );
             });
             
+            var allowedOriginsEnv = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS");
+            var allowedOrigins = !string.IsNullOrEmpty(allowedOriginsEnv)
+                ? allowedOriginsEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                : ["http://localhost:4200"];
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngular",
+                options.AddPolicy("AllowFrontend",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:4200")
+                        policy.WithOrigins(allowedOrigins)
                             .AllowAnyHeader()
-                            .AllowAnyMethod() 
-                            .AllowCredentials(); 
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     });
             });
 
@@ -99,15 +109,18 @@ public class Program
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
-            if (app.Environment.IsDevelopment())
+            using (var scope = app.Services.CreateScope())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var db = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+                db.Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
-            app.UseCors("AllowAngular");
+            app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
