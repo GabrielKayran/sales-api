@@ -86,9 +86,9 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Queryable collection of users</returns>
-    public async Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken = default)
+    public Task<IQueryable<User>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
-        return _context.Users.AsQueryable();
+        return Task.FromResult(_context.Users.AsQueryable());
     }
 
     /// <summary>

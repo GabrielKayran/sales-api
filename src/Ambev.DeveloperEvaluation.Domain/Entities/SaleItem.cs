@@ -4,52 +4,43 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class SaleItem : BaseEntity
 {
-    public Guid SaleId { get; set; }
-    public string Product { get; set; } = string.Empty;
+    public Guid SaleId { get; init; }
+    public string Product { get; init; } = string.Empty;
     public int Quantity { get; set; }
-    public decimal UnitPrice { get; set; }
+    public decimal UnitPrice { get; init; }
     public decimal Discount { get; set; }
     public decimal TotalAmount { get; set; }
     
-    public Sale Sale { get; set; }
+    public Sale? Sale { get; init; }
 
     public void CalculateDiscount()
     {
         ValidateQuantity();
         
-        decimal discountPercentage = GetDiscountPercentage();
+        var discountPercentage = GetDiscountPercentage();
         Discount = (UnitPrice * Quantity) * discountPercentage;
         TotalAmount = (UnitPrice * Quantity) - Discount;
     }
 
     private decimal GetDiscountPercentage()
     {
-        if (Quantity < 4)
+        return Quantity switch
         {
-            return 0m;
-        }
-        else if (Quantity >= 4 && Quantity < 10)
-        {
-            return 0.10m; // 10%
-        }
-        else if (Quantity >= 10 && Quantity <= 20)
-        {
-            return 0.20m; // 20%
-        }
-        
-        throw new ArgumentException("Quantidade inválida para cálculo de desconto");
+            < 4 => 0m,
+            >= 4 and < 10 => 0.10m,
+            >= 10 and <= 20 => 0.20m,
+            _ => throw new ArgumentException("Quantidade inválida para cálculo de desconto")
+        };
     }
 
     private void ValidateQuantity()
     {
-        if (Quantity <= 0)
+        switch (Quantity)
         {
-            throw new ArgumentException("Quantidade deve ser maior que zero");
-        }
-        
-        if (Quantity > 20)
-        {
-            throw new ArgumentException("Não é possível vender mais de 20 itens idênticos");
+            case <= 0:
+                throw new ArgumentException("Quantidade deve ser maior que zero");
+            case > 20:
+                throw new ArgumentException("Não é possível vender mais de 20 itens idênticos");
         }
     }
 

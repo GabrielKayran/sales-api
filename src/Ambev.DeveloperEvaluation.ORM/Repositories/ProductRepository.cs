@@ -26,9 +26,9 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public async Task<IQueryable<Product>> GetProductsAsync(CancellationToken cancellationToken = default)
+    public Task<IQueryable<Product>> GetProductsAsync(CancellationToken cancellationToken = default)
     {
-        return _context.Products.AsQueryable();
+        return Task.FromResult(_context.Products.AsQueryable());
     }
 
     public async Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken = default)

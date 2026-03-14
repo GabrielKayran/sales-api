@@ -26,9 +26,9 @@ public class CartRepository : ICartRepository
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
 
-    public async Task<IQueryable<Cart>> GetCartsAsync(CancellationToken cancellationToken = default)
+    public Task<IQueryable<Cart>> GetCartsAsync(CancellationToken cancellationToken = default)
     {
-        return _context.Carts.AsQueryable();
+        return Task.FromResult(_context.Carts.AsQueryable());
     }
 
     public async Task<Cart> UpdateAsync(Cart cart, CancellationToken cancellationToken = default)
